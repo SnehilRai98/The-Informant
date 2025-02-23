@@ -14,30 +14,16 @@ const availableCategories = [
   "business", "entertainment", "general", "health", "science", "sports", "technology"
 ];
 
-// Fetch latest news for the bulletin
+// Fetch latest news for the bulletin via Netlify function
 async function fetchBulletinNews(limit = 5) {
   try {
-    const API_KEY = await getApiKey();
-    if (!API_KEY) throw new Error("API Key is missing!");
-
-    const response = await fetch(
-      `https://newsapi.org/v2/top-headlines?language=en&country=us&pageSize=${limit}&apiKey=${API_KEY}`,
-      {
-        method: "GET",
-        headers: { 
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
-        }
-      }
-    );
-
+    const response = await fetch(`/api/fetchNews?limit=${limit}`);
     if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
 
     const data = await response.json();
     console.log("Bulletin API Response:", data);
 
-    if (data.status !== "ok" || !data.articles) {
-      throw new Error("No articles found in API response.");
-    }
+    if (!data.articles) throw new Error("No articles found in API response.");
     return data.articles;
   } catch (error) {
     console.error("Error fetching bulletin news:", error);
@@ -45,31 +31,16 @@ async function fetchBulletinNews(limit = 5) {
   }
 }
 
-// Fetch news based on category or search keyword
+// Fetch news based on category or search keyword via Netlify function
 async function fetchNews(category = "general", searchKeywords = "", country = "us") {
   try {
-    const API_KEY = await getApiKey();
-    if (!API_KEY) throw new Error("API Key is missing!");
-
-    const url = searchKeywords
-      ? `https://newsapi.org/v2/everything?q=${encodeURIComponent(searchKeywords)}&language=en&sortBy=relevancy&apiKey=${API_KEY}`
-      : `https://newsapi.org/v2/top-headlines?category=${category}&language=en&country=${country}&apiKey=${API_KEY}`;
-    
-    const response = await fetch(url, {
-      method: "GET",
-      headers: { 
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
-      }
-    });
-
+    const response = await fetch(`/api/fetchNews?category=${category}&search=${encodeURIComponent(searchKeywords)}&country=${country}`);
     if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
 
     const data = await response.json();
     console.log("News API Response:", data);
 
-    if (data.status !== "ok" || !data.articles) {
-      throw new Error("No articles found in API response.");
-    }
+    if (!data.articles) throw new Error("No articles found in API response.");
     return data.articles;
   } catch (error) {
     console.error("Error fetching news:", error);
