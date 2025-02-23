@@ -1,7 +1,7 @@
 // Fetch the API key securely from Netlify serverless function
 async function getApiKey() {
   try {
-    const response = await fetch('/api/env'); // Calls Netlify function
+    const response = await fetch('/api/env');
     const data = await response.json();
     return data.API_KEY;
   } catch (error) {
@@ -11,13 +11,7 @@ async function getApiKey() {
 }
 
 const availableCategories = [
-  "business",
-  "entertainment",
-  "general",
-  "health",
-  "science",
-  "sports",
-  "technology",
+  "business", "entertainment", "general", "health", "science", "sports", "technology"
 ];
 
 // Fetch latest news for the bulletin
@@ -30,11 +24,10 @@ async function fetchBulletinNews(limit = 5) {
       `https://newsapi.org/v2/top-headlines?language=en&country=us&pageSize=${limit}&apiKey=${API_KEY}`
     );
     const data = await response.json();
-
-    if (!data.articles) {
+    
+    if (data.status !== "ok" || !data.articles) {
       throw new Error("No articles found in API response.");
     }
-
     return data.articles;
   } catch (error) {
     console.error("Error fetching bulletin news:", error);
@@ -48,20 +41,16 @@ async function fetchNews(category = "general", searchKeywords = "", country = "u
     const API_KEY = await getApiKey();
     if (!API_KEY) throw new Error("API Key is missing!");
 
-    let url;
-    if (searchKeywords) {
-      url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(searchKeywords)}&language=en&sortBy=relevancy&apiKey=${API_KEY}`;
-    } else {
-      url = `https://newsapi.org/v2/top-headlines?category=${category}&language=en&country=${country}&apiKey=${API_KEY}`;
-    }
-
+    const url = searchKeywords
+      ? `https://newsapi.org/v2/everything?q=${encodeURIComponent(searchKeywords)}&language=en&sortBy=relevancy&apiKey=${API_KEY}`
+      : `https://newsapi.org/v2/top-headlines?category=${category}&language=en&country=${country}&apiKey=${API_KEY}`;
+    
     const response = await fetch(url);
     const data = await response.json();
-
-    if (!data.articles) {
+    
+    if (data.status !== "ok" || !data.articles) {
       throw new Error("No articles found in API response.");
     }
-
     return data.articles;
   } catch (error) {
     console.error("Error fetching news:", error);
@@ -75,13 +64,12 @@ async function updateBulletin() {
   bulletinContainer.textContent = "Loading latest news...";
 
   const articles = await fetchBulletinNews();
-
-  if (articles.length === 0) {
+  if (!articles.length) {
     bulletinContainer.textContent = "No latest news available.";
     return;
   }
 
-  bulletinContainer.innerHTML = articles.map((article) => `<span>${article.title}</span> |`).join(" ");
+  bulletinContainer.innerHTML = articles.map(article => `<span>${article.title}</span> | `).join(" ");
 }
 
 // Update news articles section
@@ -92,23 +80,18 @@ async function updateNews() {
   newsContainer.innerHTML = "<p>Loading news...</p>";
 
   const articles = await fetchNews(category, searchKeywords);
-
-  if (articles.length === 0) {
+  if (!articles.length) {
     newsContainer.innerHTML = "<p class='no-articles'>No articles found. Try a different category or keyword.</p>";
     return;
   }
 
-  newsContainer.innerHTML = articles
-    .map(
-      (article) => `
-        <div class="card" onclick="window.open('${article.url}', '_blank')">
-            <h2>${article.title}</h2>
-            <p>${truncateDescription(article.description)}</p>
-            <div class="read-more">Read More</div>
-        </div>
-    `
-    )
-    .join("");
+  newsContainer.innerHTML = articles.map(article => `
+    <div class="card" onclick="window.open('${article.url}', '_blank')">
+      <h2>${article.title}</h2>
+      <p>${truncateDescription(article.description)}</p>
+      <div class="read-more">Read More</div>
+    </div>
+  `).join(" ");
 }
 
 // Truncate description to 100 words
