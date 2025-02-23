@@ -1,0 +1,8 @@
+[build]
+  command = "echo 'No build command'"
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/env"
+  to = "/.netlify/functions/env"
+  status = 200
