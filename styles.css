@@ -46,7 +46,8 @@ body {
     white-space: nowrap;
     overflow: hidden;
     display: inline-block;
-    max-width: 100%;
+    min-width: 350px; /* Prevents shifting */
+    height: 1.5em;
 }
 
 /* Typewriter Animation */
