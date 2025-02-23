@@ -1,5 +1,6 @@
-// Initialize API Key (Replace with your NewsAPI key)
-const API_KEY = "a7542233f91042b9abf1284667287828";
+// Initialize API Key securely from Vercel environment variable
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
+
 const availableCategories = [
   "business",
   "entertainment",
@@ -30,17 +31,11 @@ async function fetchBulletinNews(limit = 5) {
 }
 
 // Fetch news based on category or search keyword
-async function fetchNews(
-  category = "general",
-  searchKeywords = "",
-  country = "us"
-) {
+async function fetchNews(category = "general", searchKeywords = "", country = "us") {
   try {
     let url;
     if (searchKeywords) {
-      url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(
-        searchKeywords
-      )}&language=en&sortBy=relevancy&apiKey=${API_KEY}`;
+      url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(searchKeywords)}&language=en&sortBy=relevancy&apiKey=${API_KEY}`;
     } else {
       url = `https://newsapi.org/v2/top-headlines?category=${category}&language=en&country=${country}&apiKey=${API_KEY}`;
     }
@@ -108,22 +103,15 @@ async function updateNews() {
 function truncateDescription(description) {
   if (!description) return "No description available.";
   const words = description.split(" ");
-  return words.length > 100
-    ? words.slice(0, 100).join(" ") + "..."
-    : description;
+  return words.length > 100 ? words.slice(0, 100).join(" ") + "..." : description;
 }
 
 // Toggle Dark Mode
 const toggleButton = document.getElementById("toggle-button");
 toggleButton.addEventListener("click", () => {
   document.body.classList.toggle("dark-mode");
-  localStorage.setItem(
-    "darkMode",
-    document.body.classList.contains("dark-mode")
-  );
-  toggleButton.textContent = document.body.classList.contains("dark-mode")
-    ? "☀️"
-    : "🌙";
+  localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
+  toggleButton.textContent = document.body.classList.contains("dark-mode") ? "☀️" : "🌙";
 });
 
 // Typewriter Animation Function
@@ -157,12 +145,10 @@ function startTypewriterEffect() {
 }
 
 // Event Listeners
-document
-  .getElementById("news-form")
-  .addEventListener("submit", async (event) => {
-    event.preventDefault();
-    updateNews();
-  });
+document.getElementById("news-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  updateNews();
+});
 
 // Initialize Page
 document.addEventListener("DOMContentLoaded", () => {
