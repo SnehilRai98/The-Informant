@@ -21,10 +21,20 @@ async function fetchBulletinNews(limit = 5) {
     if (!API_KEY) throw new Error("API Key is missing!");
 
     const response = await fetch(
-      `https://newsapi.org/v2/top-headlines?language=en&country=us&pageSize=${limit}&apiKey=${API_KEY}`
+      `https://newsapi.org/v2/top-headlines?language=en&country=us&pageSize=${limit}&apiKey=${API_KEY}`,
+      {
+        method: "GET",
+        headers: { 
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
+        }
+      }
     );
+
+    if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+
     const data = await response.json();
-    
+    console.log("Bulletin API Response:", data);
+
     if (data.status !== "ok" || !data.articles) {
       throw new Error("No articles found in API response.");
     }
@@ -45,9 +55,18 @@ async function fetchNews(category = "general", searchKeywords = "", country = "u
       ? `https://newsapi.org/v2/everything?q=${encodeURIComponent(searchKeywords)}&language=en&sortBy=relevancy&apiKey=${API_KEY}`
       : `https://newsapi.org/v2/top-headlines?category=${category}&language=en&country=${country}&apiKey=${API_KEY}`;
     
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      method: "GET",
+      headers: { 
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
+      }
+    });
+
+    if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+
     const data = await response.json();
-    
+    console.log("News API Response:", data);
+
     if (data.status !== "ok" || !data.articles) {
       throw new Error("No articles found in API response.");
     }
