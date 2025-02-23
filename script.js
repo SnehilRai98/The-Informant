@@ -1,5 +1,14 @@
-// Initialize API Key securely from Vercel environment variable
-const API_KEY = import.meta.env.VITE_API_KEY;
+// Fetch the API key securely from Netlify serverless function
+async function getApiKey() {
+  try {
+    const response = await fetch('/api/env'); // Calls Netlify function
+    const data = await response.json();
+    return data.API_KEY;
+  } catch (error) {
+    console.error("Error fetching API key:", error);
+    return null;
+  }
+}
 
 const availableCategories = [
   "business",
@@ -14,6 +23,9 @@ const availableCategories = [
 // Fetch latest news for the bulletin
 async function fetchBulletinNews(limit = 5) {
   try {
+    const API_KEY = await getApiKey();
+    if (!API_KEY) throw new Error("API Key is missing!");
+
     const response = await fetch(
       `https://newsapi.org/v2/top-headlines?language=en&country=us&pageSize=${limit}&apiKey=${API_KEY}`
     );
@@ -33,6 +45,9 @@ async function fetchBulletinNews(limit = 5) {
 // Fetch news based on category or search keyword
 async function fetchNews(category = "general", searchKeywords = "", country = "us") {
   try {
+    const API_KEY = await getApiKey();
+    if (!API_KEY) throw new Error("API Key is missing!");
+
     let url;
     if (searchKeywords) {
       url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(searchKeywords)}&language=en&sortBy=relevancy&apiKey=${API_KEY}`;
@@ -66,9 +81,7 @@ async function updateBulletin() {
     return;
   }
 
-  bulletinContainer.innerHTML = articles
-    .map((article) => `<span>${article.title}</span> |`)
-    .join(" ");
+  bulletinContainer.innerHTML = articles.map((article) => `<span>${article.title}</span> |`).join(" ");
 }
 
 // Update news articles section
@@ -81,8 +94,7 @@ async function updateNews() {
   const articles = await fetchNews(category, searchKeywords);
 
   if (articles.length === 0) {
-    newsContainer.innerHTML =
-      "<p class='no-articles'>No articles found. Try a different category or keyword.</p>";
+    newsContainer.innerHTML = "<p class='no-articles'>No articles found. Try a different category or keyword.</p>";
     return;
   }
 
@@ -124,9 +136,9 @@ function startTypewriterEffect() {
     if (index < text.length) {
       subtitle.textContent += text.charAt(index);
       index++;
-      setTimeout(type, 100); // Typing speed
+      setTimeout(type, 100);
     } else {
-      setTimeout(erase, 2000); // Pause before erasing
+      setTimeout(erase, 2000);
     }
   }
 
@@ -134,14 +146,14 @@ function startTypewriterEffect() {
     if (index > 0) {
       subtitle.textContent = text.substring(0, index - 1);
       index--;
-      setTimeout(erase, 50); // Erasing speed
+      setTimeout(erase, 50);
     } else {
-      setTimeout(type, 1000); // Pause before restarting
+      setTimeout(type, 1000);
     }
   }
 
-  subtitle.textContent = ""; // Clear text before starting
-  type(); // Start the animation
+  subtitle.textContent = "";
+  type();
 }
 
 // Event Listeners
@@ -154,5 +166,5 @@ document.getElementById("news-form").addEventListener("submit", async (event) =>
 document.addEventListener("DOMContentLoaded", () => {
   updateBulletin();
   updateNews();
-  startTypewriterEffect(); // Start typewriter effect
+  startTypewriterEffect();
 });
