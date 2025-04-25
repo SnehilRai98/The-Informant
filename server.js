@@ -21,15 +21,26 @@ app.get('/api/news', async (req, res) => {
         if (search) {
             url += `everything?q=${encodeURIComponent(search)}&language=en&sortBy=publishedAt`;
         } else {
-            url += `top-headlines?category=${category}&language=en&country=us`;
+            url += `top-headlines?category=${category || 'general'}&language=en&country=us`;
         }
         
-        url += `&pageSize=12&page=${page}&apiKey=${API_KEY}`;
+        url += `&pageSize=12&page=${page || 1}&apiKey=${API_KEY}`;
+        
+        console.log('Making request to:', url);
         
         const response = await fetch(url);
         const data = await response.json();
+        
+        console.log('API Response:', data);
+        
+        if (data.status === 'error') {
+            console.error('NewsAPI Error:', data);
+            return res.status(500).json({ error: data.message || 'NewsAPI error' });
+        }
+        
         res.json(data);
     } catch (error) {
+        console.error('Server Error:', error);
         res.status(500).json({ error: error.message });
     }
 });
