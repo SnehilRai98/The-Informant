@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>THE INFORMANT | Professional News Aggregator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="logo-container">
+                <h1 id="typewriter-title">THE INFORMANT</h1>
+                <p id="typewriter-subtitle"></p>
+                <div class="date-display" id="current-date"></div>
+            </div>
+
+            <!-- Dark Mode Toggle -->
+            <button class="toggle-button" id="toggle-button" aria-label="Toggle dark mode">
+                <i class="fas fa-moon"></i>
+            </button>
+        </header>
+
+        <!-- News Bulletin -->
+        <div class="news-bulletin">
+            <div class="bulletin-label">BREAKING</div>
+            <div class="bulletin-wrapper">
+                <div class="bulletin-content" id="news-bulletin">
+                    Loading latest headlines...
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="categories-container">
+            <div class="categories-scroll">
+                <button class="category-btn active" data-category="general">🌐 General</button>
+                <button class="category-btn" data-category="business">💼 Business</button>
+                <button class="category-btn" data-category="entertainment">🎬 Entertainment</button>
+                <button class="category-btn" data-category="health">🏥 Health</button>
+                <button class="category-btn" data-category="science">🔬 Science</button>
+                <button class="category-btn" data-category="sports">⚽ Sports</button>
+                <button class="category-btn" data-category="technology">💻 Tech</button>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <form id="news-form">
+                <div class="search-group">
+                    <div class="search-input-wrapper">
+                        <input type="text" name="search" id="search" placeholder="Search for news..."
+                            aria-label="Search news">
+                        <button type="submit" class="search-btn" aria-label="Search">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-message" id="error-message"></div>
+
+        <!-- News Results -->
+        <div class="news-results">
+            <div class="results-header">
+                <h2 class="section-title">Latest News</h2>
+                <div class="results-count" id="results-count">Loading...</div>
+            </div>
+
+            <div class="news-grid" id="news-cards">
+                <!-- Will be populated by JavaScript -->
+            </div>
+
+            <div class="load-more" id="load-more">
+                <button class="load-more-btn" id="load-more-btn">Load More</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll to top button -->
+    <button id="scroll-top-btn" class="scroll-top-btn" aria-label="Scroll to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
