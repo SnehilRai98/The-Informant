@@ -76,9 +76,20 @@ async function fetchBulletinNews(limit = 5) {
       `/api/news?category=general&page=1&pageSize=${limit}`
     );
     const data = await response.json();
-    if (data.status === "error")
+    
+    if (data.error) {
+      console.error('Bulletin Error:', data.error);
+      throw new Error(data.error);
+    }
+    
+    if (data.status === "error") {
       throw new Error(data.message || "Failed to fetch news");
-    if (!data.articles?.length) throw new Error("No articles found");
+    }
+    
+    if (!data.articles?.length) {
+      throw new Error("No articles found");
+    }
+    
     return data.articles;
   } catch (error) {
     console.error("Error fetching bulletin news:", error);
@@ -95,9 +106,19 @@ async function fetchNews(page = 1, category = "general", searchKeywords = "") {
 
     const response = await fetch(url);
     const data = await response.json();
-    if (data.status === "error")
+    
+    if (data.error) {
+      console.error('News Error:', data.error);
+      throw new Error(data.error);
+    }
+    
+    if (data.status === "error") {
       throw new Error(data.message || "Failed to fetch news");
-    if (!data.articles?.length) throw new Error("No articles found");
+    }
+    
+    if (!data.articles?.length) {
+      throw new Error("No articles found");
+    }
 
     return {
       articles: data.articles,
