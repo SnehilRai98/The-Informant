@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function initDarkMode() {
   if (localStorage.getItem("darkMode") === "true") {
     document.body.classList.add("dark-mode");
-    toggleButton.innerHTML = '<i class="fas fa-sun" style="font-size: 1.2rem;"></i>';
+    toggleButton.innerHTML = '<i class="fas fa-sun"></i>';
   }
 }
 
@@ -73,23 +73,12 @@ function updateCurrentDate() {
 async function fetchBulletinNews(limit = 5) {
   try {
     const response = await fetch(
-      `/api/news?category=general&page=1&pageSize=${limit}`
+      `https://newsapi.org/v2/top-headlines?language=en&country=us&pageSize=${limit}&apiKey=${API_KEY}`
     );
     const data = await response.json();
-    
-    if (data.error) {
-      console.error('Bulletin Error:', data.error);
-      throw new Error(data.error);
-    }
-    
-    if (data.status === "error") {
+    if (data.status === "error")
       throw new Error(data.message || "Failed to fetch news");
-    }
-    
-    if (!data.articles?.length) {
-      throw new Error("No articles found");
-    }
-    
+    if (!data.articles?.length) throw new Error("No articles found");
     return data.articles;
   } catch (error) {
     console.error("Error fetching bulletin news:", error);
@@ -101,24 +90,16 @@ async function fetchBulletinNews(limit = 5) {
 async function fetchNews(page = 1, category = "general", searchKeywords = "") {
   try {
     const url = searchKeywords
-      ? `/api/news?search=${encodeURIComponent(searchKeywords)}&page=${page}`
-      : `/api/news?category=${category}&page=${page}`;
+      ? `https://newsapi.org/v2/everything?q=${encodeURIComponent(
+          searchKeywords
+        )}&language=en&sortBy=publishedAt&pageSize=12&page=${page}&apiKey=${API_KEY}`
+      : `https://newsapi.org/v2/top-headlines?category=${category}&language=en&country=us&pageSize=12&page=${page}&apiKey=${API_KEY}`;
 
     const response = await fetch(url);
     const data = await response.json();
-    
-    if (data.error) {
-      console.error('News Error:', data.error);
-      throw new Error(data.error);
-    }
-    
-    if (data.status === "error") {
+    if (data.status === "error")
       throw new Error(data.message || "Failed to fetch news");
-    }
-    
-    if (!data.articles?.length) {
-      throw new Error("No articles found");
-    }
+    if (!data.articles?.length) throw new Error("No articles found");
 
     return {
       articles: data.articles,
@@ -251,7 +232,7 @@ function createNewsCard(article) {
     business: "💼",
     entertainment: "🎬",
     health: "🏥",
-    science: "��",
+    science: "🔬",
     sports: "⚽",
     technology: "💻",
     general: "📰",
@@ -376,8 +357,8 @@ toggleButton.addEventListener("click", () => {
   const isDarkMode = document.body.classList.contains("dark-mode");
   localStorage.setItem("darkMode", isDarkMode);
   toggleButton.innerHTML = isDarkMode
-    ? '<i class="fas fa-sun" style="font-size: 1.2rem;"></i>'
-    : '<i class="fas fa-moon" style="font-size: 1.2rem;"></i>';
+    ? '<i class="fas fa-sun"></i>'
+    : '<i class="fas fa-moon"></i>';
 });
 
 loadMoreBtn.addEventListener("click", loadMoreNews);
