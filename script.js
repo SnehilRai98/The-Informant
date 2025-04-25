@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function initDarkMode() {
   if (localStorage.getItem("darkMode") === "true") {
     document.body.classList.add("dark-mode");
-    toggleButton.innerHTML = '<i class="fas fa-sun"></i>';
+    toggleButton.innerHTML = '<i class="fas fa-sun" style="font-size: 1.2rem;"></i>';
   }
 }
 
@@ -73,7 +73,7 @@ function updateCurrentDate() {
 async function fetchBulletinNews(limit = 5) {
   try {
     const response = await fetch(
-      `https://newsapi.org/v2/top-headlines?language=en&country=us&pageSize=${limit}&apiKey=${API_KEY}`
+      `/api/news?category=general&page=1&pageSize=${limit}`
     );
     const data = await response.json();
     if (data.status === "error")
@@ -90,10 +90,8 @@ async function fetchBulletinNews(limit = 5) {
 async function fetchNews(page = 1, category = "general", searchKeywords = "") {
   try {
     const url = searchKeywords
-      ? `https://newsapi.org/v2/everything?q=${encodeURIComponent(
-          searchKeywords
-        )}&language=en&sortBy=publishedAt&pageSize=12&page=${page}&apiKey=${API_KEY}`
-      : `https://newsapi.org/v2/top-headlines?category=${category}&language=en&country=us&pageSize=12&page=${page}&apiKey=${API_KEY}`;
+      ? `/api/news?search=${encodeURIComponent(searchKeywords)}&page=${page}`
+      : `/api/news?category=${category}&page=${page}`;
 
     const response = await fetch(url);
     const data = await response.json();
@@ -232,7 +230,7 @@ function createNewsCard(article) {
     business: "💼",
     entertainment: "🎬",
     health: "🏥",
-    science: "🔬",
+    science: "��",
     sports: "⚽",
     technology: "💻",
     general: "📰",
@@ -357,8 +355,8 @@ toggleButton.addEventListener("click", () => {
   const isDarkMode = document.body.classList.contains("dark-mode");
   localStorage.setItem("darkMode", isDarkMode);
   toggleButton.innerHTML = isDarkMode
-    ? '<i class="fas fa-sun"></i>'
-    : '<i class="fas fa-moon"></i>';
+    ? '<i class="fas fa-sun" style="font-size: 1.2rem;"></i>'
+    : '<i class="fas fa-moon" style="font-size: 1.2rem;"></i>';
 });
 
 loadMoreBtn.addEventListener("click", loadMoreNews);
